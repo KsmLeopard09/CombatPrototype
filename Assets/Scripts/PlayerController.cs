@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        dampTime = 0.08f;
+        dampTime = 0.23f;
         rb = GetComponent<Rigidbody>();
     }
 
