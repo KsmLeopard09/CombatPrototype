@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            dampTime = 0.26f;
+            dampTime = 0.32f;
         }
         movementValue.x = x;
         movementValue.y = y;
