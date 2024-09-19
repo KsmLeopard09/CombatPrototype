@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public InputAction sprintAction;
-    public Vector2 movementValue;
+    public Vector2 movementValue, actualValue;
     [SerializeField] Animator animator;
     Rigidbody rb;
     float dampTime;
@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        dampTime = 0.26f;
         rb = GetComponent<Rigidbody>();
     }
 
@@ -26,11 +25,12 @@ public class PlayerController : MonoBehaviour
     {
         x = Input.GetAxisRaw("Horizontal");
         y = Input.GetAxisRaw("Vertical");
+        actualValue = new Vector2(x, y);
         if (sprintAction.IsPressed())
         {
             animator.SetBool("isSprinting", true);
         }
-        else if(sprintAction.IsPressed() && movementValue != Vector2.zero)
+        else if (sprintAction.IsPressed() && movementValue != Vector2.zero)
         {
             animator.SetBool("isMoving", false);
             animator.SetBool("isSprinting", true);
@@ -55,60 +55,90 @@ public class PlayerController : MonoBehaviour
         {
             y = 0.5f;
         }
-        if(x >= 0.8 || x < -0.8)
-        {
-            dampTime = 0.08f;
-        }
-        else
-        {
-            dampTime = 0.32f;
-        }
         movementValue.x = x;
         movementValue.y = y;
-        if(movementValue.x > -1 && movementValue.x < -0.3 && movementValue.y < 1 && movementValue.y > 0)
+        dampTime = 0.12f;
+        if(y == 0 && Vector2.SqrMagnitude(actualValue) >= 0.25 && Vector2.SqrMagnitude(actualValue) < 1)
         {
-            movementValue.x = -0.7071f;
-            movementValue.y = 0.7071f;
+            if(x > 0)
+            {
+                movementValue.x = 0.5f;
+            }
+            else
+            {
+                movementValue.x = -0.5f;
+            }
         }
-        if (movementValue.x < 1 && movementValue.x > 0.3 && movementValue.y < 1 && movementValue.y > 0)
+        #region WalkLogic
+        if (x < -0.4 && y < -0.2 && Vector2.SqrMagnitude(actualValue) < 0.25)
+        {
+            movementValue.x = -0.3f;
+            movementValue.y = -0.3f;
+        }
+        if (x > 0.2 && y > 0.2 && Vector2.SqrMagnitude(actualValue) < 0.25)
+        {
+            movementValue.x = 0.3f;
+            movementValue.y = 0.3f;
+        }
+        if (x < -0.4 && y > 0.2 && Vector2.SqrMagnitude(actualValue) < 0.25)
+        {
+            movementValue.x = -0.3f;
+            movementValue.y = 0.3f;
+        }
+        if (x > 0.2 && y < -0.2 && Vector2.SqrMagnitude(actualValue) < 0.25)
+        {
+            movementValue.x = 0.3f;
+            movementValue.y = -0.3f;
+        }
+        #endregion
+        #region JogLogic
+        if (x < -0.4 && y < -0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
+        {
+            dampTime = 0.03f;
+            movementValue.x = -0.7071f;
+            movementValue.y = -0.7071f;
+        }
+        if (x > 0.2 && y > 0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
         {
             movementValue.x = 0.7071f;
             movementValue.y = 0.7071f;
         }
-        if (movementValue.x > -1 && movementValue.x < -0.3 && movementValue.y < 0 && movementValue.y > -1)
+        if (x < -0.4 && y > 0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
         {
             movementValue.x = -0.7071f;
-            movementValue.y = -0.7071f;
+            movementValue.y = 0.7071f;
         }
-        if (movementValue.x < 1 && movementValue.x > 0.3 && movementValue.y < 0 && movementValue.y > -1)
+        if (x > 0.2 && y < -0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
         {
+            dampTime = 0.03f;
             movementValue.x = 0.7071f;
             movementValue.y = -0.7071f;
         }
+        #endregion
         if (animator.GetBool("isSprinting") == false)
         {
             if (movementValue == Vector2.zero)
             {
                 idleFrames += Time.deltaTime;
-                if(idleFrames > 0.1f)
+                if (idleFrames > 0.1f)
                 {
                     animator.SetBool("isMoving", false);
                 }
             }
-            if(sprintAction.IsPressed() && movementValue != Vector2.zero)
+            if (sprintAction.IsPressed() && movementValue != Vector2.zero)
             {
                 idleFrames = 0;
                 animator.SetBool("isMoving", false);
             }
-            else if(sprintAction.IsPressed() == false && movementValue != Vector2.zero)
+            else if (sprintAction.IsPressed() == false && movementValue != Vector2.zero)
             {
                 idleFrames = 0;
                 animator.SetBool("isMoving", true);
             }
         }
-        if(animator.GetBool("isMoving") == true)
+        if (animator.GetBool("isMoving") == true)
         {
-            if(sprintAction.IsPressed())
+            if (sprintAction.IsPressed())
             {
                 idleFrames = 0;
                 animator.SetBool("isMoving", false);

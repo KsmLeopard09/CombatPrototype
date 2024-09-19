@@ -12,12 +12,14 @@ public class CameraController : MonoBehaviour
     float mouseX;
     float mouseY;
 
+    public Vector3 offset;
     // Start is called before the first frame update
     void Start()
     {
         hSensitivity = 30.0f;
         vSensitivity = 5.0f;
         Cursor.visible = false;
+        offset = transform.position - player.position;
     }
 
     // Update is called once per frame
@@ -25,7 +27,6 @@ public class CameraController : MonoBehaviour
     {
         ControlCamera();
     }
-
     void ControlCamera()
     {
         mouseX += Input.GetAxis("Mouse X") * hSensitivity;

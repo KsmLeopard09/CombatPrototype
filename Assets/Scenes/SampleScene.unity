@@ -246,6 +246,7 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
   movementValue: {x: 0, y: 0}
+  actualValue: {x: 0, y: 0}
   animator: {fileID: 7313582593452911996}
 --- !u!1 &705507993
 GameObject:
@@ -427,8 +428,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0011883153, y: 0.059878133, z: 0.000080269754, w: -0.99820495}
-  m_LocalPosition: {x: 0.72, y: 1.66, z: -2.38}
+  m_LocalRotation: {x: 0.0011883155, y: 0.059878137, z: 0.00008026976, w: -0.998205}
+  m_LocalPosition: {x: 0.72, y: 1.6599998, z: -2.38}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -450,6 +451,7 @@ MonoBehaviour:
   vSensitivity: 0
   target: {fileID: 963194228}
   player: {fileID: 3719758106347992838}
+  offset: {x: 0, y: 0, z: 0}
 --- !u!1 &1934290349
 GameObject:
   m_ObjectHideFlags: 0
@@ -2496,7 +2498,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 116
+  m_Constraints: 4
   m_CollisionDetection: 0
 --- !u!136 &7313582593452911998
 CapsuleCollider:
