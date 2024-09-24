@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
         }
         movementValue.x = x;
         movementValue.y = y;
-        dampTime = 0.12f;
+        dampTime = 0.1f;
         if(y == 0 && Vector2.SqrMagnitude(actualValue) >= 0.25 && Vector2.SqrMagnitude(actualValue) < 1)
         {
             if(x > 0)
@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour
         #region JogLogic
         if (x < -0.4 && y < -0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
         {
-            dampTime = 0.03f;
+            dampTime = 0.1f;
             movementValue.x = -0.7071f;
             movementValue.y = -0.7071f;
         }
@@ -110,7 +110,7 @@ public class PlayerController : MonoBehaviour
         }
         if (x > 0.2 && y < -0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
         {
-            dampTime = 0.03f;
+            dampTime = 0.1f;
             movementValue.x = 0.7071f;
             movementValue.y = -0.7071f;
         }
