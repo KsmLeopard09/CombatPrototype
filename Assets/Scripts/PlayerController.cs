@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public InputAction sprintAction;
-    public Vector2 movementValue, actualValue;
+    public Vector2 movementValue;
     [SerializeField] Animator animator;
     Rigidbody rb;
     float dampTime;
@@ -23,98 +23,148 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Gets the values of the Horizontal and the vertical axes
         x = Input.GetAxisRaw("Horizontal");
         y = Input.GetAxisRaw("Vertical");
-        actualValue = new Vector2(x, y);
+        //Sets sprinting to true when sprint button is pressed
         if (sprintAction.IsPressed())
         {
             animator.SetBool("isSprinting", true);
         }
+        //Sets sprinting to true right from idle instead of having to move first
         else if (sprintAction.IsPressed() && movementValue != Vector2.zero)
         {
             animator.SetBool("isMoving", false);
             animator.SetBool("isSprinting", true);
         }
-        if (movementValue == Vector2.zero || movementValue.y < 0.3f)
+        //sets sprinting to false if players stops moving or moves too much to the side
+        if (movementValue == Vector2.zero || movementValue.y < 0.4f)
         {
             animator.SetBool("isSprinting", false);
         }
-        if (x > -0.5f && x < -0.1f)
+        //does not register movement to the side if it's very minimal
+        if(Mathf.Abs(movementValue.x) < 0.3f)
         {
-            x = -0.5f;
+            movementValue.x = 0f;
         }
-        if (x < 0.5f && x > 0.1f)
-        {
-            x = 0.5f;
-        }
-        if (y > -0.5f && y < -0.1f)
-        {
-            y = -0.5f;
-        }
-        if (y < 0.5f && y > 0.1f)
-        {
-            y = 0.5f;
-        }
+        //stores movement values in variables to compare later on
         movementValue.x = x;
         movementValue.y = y;
-        dampTime = 0.1f;
-        if(y == 0 && Vector2.SqrMagnitude(actualValue) >= 0.25 && Vector2.SqrMagnitude(actualValue) < 1)
-        {
-            if(x > 0)
-            {
-                movementValue.x = 0.5f;
-            }
-            else
-            {
-                movementValue.x = -0.5f;
-            }
-        }
+        //sets a blending period in between animations without having to have exit time allowing for quick and smooth blending
+        dampTime = 0.12f;
+
+
+
         #region WalkLogic
-        if (x < -0.4 && y < -0.2 && Vector2.SqrMagnitude(actualValue) < 0.25)
+        //checks to see if the overall squared magnitude of the movement vector is less than or equal to 0.25 to see if walking conditions need to be checked
+        if(Vector2.SqrMagnitude(movementValue) > 0 && Vector2.SqrMagnitude(movementValue) < 0.49)
         {
-            movementValue.x = -0.3f;
-            movementValue.y = -0.3f;
-        }
-        if (x > 0.2 && y > 0.2 && Vector2.SqrMagnitude(actualValue) < 0.25)
-        {
-            movementValue.x = 0.3f;
-            movementValue.y = 0.3f;
-        }
-        if (x < -0.4 && y > 0.2 && Vector2.SqrMagnitude(actualValue) < 0.25)
-        {
-            movementValue.x = -0.3f;
-            movementValue.y = 0.3f;
-        }
-        if (x > 0.2 && y < -0.2 && Vector2.SqrMagnitude(actualValue) < 0.25)
-        {
-            movementValue.x = 0.3f;
-            movementValue.y = -0.3f;
+            //takes the overall squared magnitude of the movement vector and sets the x value depending on direction
+            if (y == 0 && Vector2.SqrMagnitude(movementValue) >= 0.0001 && Vector2.SqrMagnitude(movementValue) < 0.49)
+            {
+                if (x > 0)
+                {
+                    movementValue.x = 0.5f;
+                }
+                else
+                {
+                    movementValue.x = -0.5f;
+                }
+            }
+            //takes the overall squared magnitude of the movement vector and sets the y value depending on direction
+            if (x == 0 && Vector2.SqrMagnitude(movementValue) >= 0 && Vector2.SqrMagnitude(movementValue) < 0.49)
+            {
+                if (y > 0)
+                {
+                    movementValue.y = 0.5f;
+                }
+                else
+                {
+                    movementValue.y = -0.5f;
+                }
+            }
+            //takes the overall squared magnitude of the movement vector and sets the x and y value depending on direction for diagonal movement
+            if (x < 0 && y < 0)
+            {
+                movementValue.x = -0.3f;
+                movementValue.y = -0.3f;
+            }
+            if (x > 0 && y > 0)
+            {
+                movementValue.x = 0.3f;
+                movementValue.y = 0.3f;
+            }
+            if (x < 0 && y > 0)
+            {
+                movementValue.x = -0.3f;
+                movementValue.y = 0.3f;
+            }
+            if (x > 0 && y < 0)
+            {
+                movementValue.x = 0.3f;
+                movementValue.y = -0.3f;
+            }
         }
         #endregion
+
+
+
+
         #region JogLogic
-        if (x < -0.4 && y < -0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
+        if(Vector2.SqrMagnitude(movementValue) >= 0.49)
         {
-            dampTime = 0.1f;
-            movementValue.x = -0.7071f;
-            movementValue.y = -0.7071f;
-        }
-        if (x > 0.2 && y > 0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
-        {
-            movementValue.x = 0.7071f;
-            movementValue.y = 0.7071f;
-        }
-        if (x < -0.4 && y > 0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
-        {
-            movementValue.x = -0.7071f;
-            movementValue.y = 0.7071f;
-        }
-        if (x > 0.2 && y < -0.2 && Vector2.SqrMagnitude(actualValue) > 0.25)
-        {
-            dampTime = 0.1f;
-            movementValue.x = 0.7071f;
-            movementValue.y = -0.7071f;
+            //takes the overall squared magnitude of the movement vector and sets the x value depending on direction
+            if (y == 0 && Vector2.SqrMagnitude(movementValue) >= 0.25 && Vector2.SqrMagnitude(movementValue) < 1)
+            {
+                if (x > 0)
+                {
+                    movementValue.x = 1f;
+                }
+                else
+                {
+                    movementValue.x = -1f;
+                }
+            }
+            //takes the overall squared magnitude of the movement vector and sets the y value depending on direction
+            if (x == 0 && Vector2.SqrMagnitude(movementValue) >= 0.25 && Vector2.SqrMagnitude(movementValue) < 1)
+            {
+                if (y > 0)
+                {
+                    movementValue.y = 1f;
+                }
+                else
+                {
+                    movementValue.y = -1f;
+                }
+            }
+            if (x < -0.4 && y < -0.2)
+            {
+                dampTime = 0.1f;
+                movementValue.x = -0.7071f;
+                movementValue.y = -0.7071f;
+            }
+            if (x > 0.2 && y > 0.2)
+            {
+                movementValue.x = 0.7071f;
+                movementValue.y = 0.7071f;
+            }
+            if (x < -0.4 && y > 0.2)
+            {
+                movementValue.x = -0.7071f;
+                movementValue.y = 0.7071f;
+            }
+            if (x > 0.2 && y < -0.2)
+            {
+                dampTime = 0.08f;
+                movementValue.x = 0.7071f;
+                movementValue.y = -0.7071f;
+            }
         }
         #endregion
+
+
+
+        #region IdleAndSprint
         if (animator.GetBool("isSprinting") == false)
         {
             if (movementValue == Vector2.zero)
@@ -145,11 +195,19 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("isSprinting", true);
             }
         }
+        #endregion
+
+
+
         movementValue = Vector2.ClampMagnitude(movementValue, 1);
+
+
         if (animator.GetBool("isSprinting") == false)
         {
             animator.SetFloat("Multiplier", 1.45f);
         }
+
+
         animator.SetFloat("X", movementValue.x, dampTime, Time.deltaTime);
         animator.SetFloat("Y", movementValue.y, dampTime, Time.deltaTime);
     }
