@@ -51,16 +51,23 @@ public class PlayerController : MonoBehaviour
         movementValue.x = x;
         movementValue.y = y;
         //sets a blending period in between animations without having to have exit time allowing for quick and smooth blending
-        dampTime = 0.12f;
+        if(y > 0.3f)
+        {
+            dampTime = 0.075f;
+        }
+        else
+        {
+            dampTime = 0.12f;
+        }
 
 
 
         #region WalkLogic
         //checks to see if the overall squared magnitude of the movement vector is less than or equal to 0.25 to see if walking conditions need to be checked
-        if(Vector2.SqrMagnitude(movementValue) > 0 && Vector2.SqrMagnitude(movementValue) < 0.49)
+        if(Vector2.SqrMagnitude(movementValue) > 0.0001 && Vector2.SqrMagnitude(movementValue) < 0.49)
         {
             //takes the overall squared magnitude of the movement vector and sets the x value depending on direction
-            if (y == 0 && Vector2.SqrMagnitude(movementValue) >= 0.0001 && Vector2.SqrMagnitude(movementValue) < 0.49)
+            if (y == 0)
             {
                 if (x > 0)
                 {
@@ -72,7 +79,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             //takes the overall squared magnitude of the movement vector and sets the y value depending on direction
-            if (x == 0 && Vector2.SqrMagnitude(movementValue) >= 0 && Vector2.SqrMagnitude(movementValue) < 0.49)
+            if (x == 0)
             {
                 if (y > 0)
                 {
@@ -114,7 +121,7 @@ public class PlayerController : MonoBehaviour
         if(Vector2.SqrMagnitude(movementValue) >= 0.49)
         {
             //takes the overall squared magnitude of the movement vector and sets the x value depending on direction
-            if (y == 0 && Vector2.SqrMagnitude(movementValue) >= 0.25 && Vector2.SqrMagnitude(movementValue) < 1)
+            if (y == 0)
             {
                 if (x > 0)
                 {
@@ -126,7 +133,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             //takes the overall squared magnitude of the movement vector and sets the y value depending on direction
-            if (x == 0 && Vector2.SqrMagnitude(movementValue) >= 0.25 && Vector2.SqrMagnitude(movementValue) < 1)
+            if (x == 0)
             {
                 if (y > 0)
                 {
