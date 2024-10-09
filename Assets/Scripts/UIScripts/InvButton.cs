@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class InvButton: MonoBehaviour
 {
-    [SerializeField] Vector2 invArrayCoord;
+    public int invArrayID;
     InvManager invManager;
 
     public void WasClicked()
     {
 		invManager = GameObject.FindWithTag("UIManager").GetComponent<InvManager>();
-		invManager.SlotClick(invArrayCoord);
+		invManager.SlotClick(invArrayID);
 
-        Debug.Log($"Click {invArrayCoord}");
+        Debug.Log($"Click {invArrayID}");
     }
 }

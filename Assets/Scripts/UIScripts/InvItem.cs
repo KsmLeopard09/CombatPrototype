@@ -9,6 +9,8 @@ public class InvItem : MonoBehaviour
     string descriptionText;
     string nameText;
     string spritePath;
+
+    //public bool isAThing;
     
     // Start is called before the first frame update
     void Start()

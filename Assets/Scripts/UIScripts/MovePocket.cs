@@ -9,7 +9,7 @@ public class MovePocket : MonoBehaviour
 	Texture2D itemImg;
 	InvManager manager;
 
-	[SerializeField] Vector2 ourCoords;
+	[SerializeField] int ourID;
 	Image imageComponent;
 
 	void Start()
@@ -18,7 +18,7 @@ public class MovePocket : MonoBehaviour
 		EventScript.MoveSlotHide.AddListener(Hide);
 
 		imageComponent = GetComponent<Image>();
-		Reveal();
+		Hide();
 	}
 
     void Update()
@@ -26,9 +26,9 @@ public class MovePocket : MonoBehaviour
         
     }
 
-	void Hide(Vector2 newCoords)
+	void Hide(int newID)
 	{
-		if (ourCoords == newCoords)
+		if (ourID == newID)
 		{
 			imageComponent.enabled = false;
 		}
@@ -39,9 +39,9 @@ public class MovePocket : MonoBehaviour
 		imageComponent.enabled = false;
 	}
 
-	void Reveal(Vector2 newCoords, Sprite newSprite)
+	void Reveal(int newID, Sprite newSprite)
 	{
-		if (ourCoords == newCoords)
+		if (ourID == newID)
 		{
 			imageComponent.enabled = true;
 			imageComponent.sprite = newSprite;

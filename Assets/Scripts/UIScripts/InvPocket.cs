@@ -5,16 +5,17 @@ using UnityEngine.UI;
 
 public class InvPocket : MonoBehaviour
 {
-	Texture2D itemImg;
+	Sprite itemSprite;
 	InvManager manager;
 
-	[SerializeField] Vector2 ourCoords;
+	public int ourID;
 	Image imageComponent;
 
 	void Start()
 	{
 		EventScript.InvPocketReveal.AddListener(Reveal);
 		EventScript.InvPocketHide.AddListener(Hide);
+		EventScript.InvPocketImagePlace.AddListener(ImageSet);
 
 		imageComponent = GetComponent<Image>();
 		Reveal();
@@ -25,9 +26,19 @@ public class InvPocket : MonoBehaviour
 
 	}
 
-	void Hide(Vector2 newCoords)
+	void ImageSet(int incomingID, Sprite incomingSprite)
 	{
-		if (ourCoords == newCoords)
+		Debug.Log($"incomingID{incomingID}, ourID{ourID}");
+		if (incomingID == ourID)
+		{
+			itemSprite = incomingSprite;
+			imageComponent.sprite = itemSprite;
+		}
+	}
+
+	void Hide(int newID)
+	{
+		if (ourID == newID)
 		{
 			imageComponent.enabled = false;
 
@@ -38,9 +49,9 @@ public class InvPocket : MonoBehaviour
 		imageComponent.enabled = false;
 	}
 
-	void Reveal(Vector2 newCoords)
+	void Reveal(int newCoords)
 	{
-		if (ourCoords == newCoords)
+		if (ourID == newCoords)
 		{
 			imageComponent.enabled = true;
 		}
