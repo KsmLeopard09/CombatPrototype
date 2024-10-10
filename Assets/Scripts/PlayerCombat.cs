@@ -7,7 +7,7 @@ public class PlayerCombat : MonoBehaviour
     public List<AttackSO> combo; // List of combo attacks
     public InputAction attack, heavyAttack; // Input action for attack
     public int comboCounter; // Current combo step
-    public bool attackPressed, heavyPressed; // Buffered input indicator
+    public bool attackPressed, heavyPressed, heavyEnded; // Buffered input indicator
     [SerializeField] PlayerController controller;
 
     public Animator anim; // Reference to the Animator component
@@ -20,21 +20,16 @@ public class PlayerCombat : MonoBehaviour
 
     private void Update()
     {
-        if (attack.WasPerformedThisFrame())
+        if (!anim.GetCurrentAnimatorStateInfo(0).IsTag("heavyAttack"))
         {
-            CancelInvoke("EndCombo");
-            Attack();
-        }
-        if (heavyAttack.IsPressed() && !anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack"))
-        {
-            anim.SetBool("heavyStarted", true);
-            anim.SetBool("heavyHeld", true);
-            anim.SetBool("heavyEnded", false);
-        }
-        else if (heavyAttack.IsPressed() && anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") && anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.6)
-        {
-            heavyPressed = true;
-            StartCoroutine("WaitForHeavy");
+            if(attack.IsPressed())
+            {
+                Attack();
+            }
+            else if(heavyAttack.IsPressed())
+            {
+                HeavyAttack();
+            }
         }
         if (heavyAttack.IsInProgress())
         {
@@ -44,11 +39,7 @@ public class PlayerCombat : MonoBehaviour
         {
             anim.SetBool("heavyHeld", false);
         }
-        if (anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack"))
-        {
-            controller.CanMove(false);
-        }
-        if(!anim.GetBool("heavyEnded"))
+        if (!anim.GetBool("heavyEnded"))
         {
             CancelInvoke("EndCombo");
         }
@@ -67,7 +58,7 @@ public class PlayerCombat : MonoBehaviour
             {
                 StartAttack();
             }
-            else if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f && attack.IsPressed())
+            else if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f && attack.IsPressed() && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") && !anim.GetBool("heavyAttack"))
             {
                 // Buffer the input for the next attack
                 attackPressed = true;
@@ -75,7 +66,21 @@ public class PlayerCombat : MonoBehaviour
             }
         }
     }
-
+    void HeavyAttack()
+    {
+        comboCounter = 0;
+        anim.SetBool("heavyAttack", true);
+        if (!anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack"))
+        {
+            anim.SetBool("heavyHeld", true);
+            anim.SetBool("heavyEnded", false);
+        }
+        else if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") && anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.9)
+        {
+            heavyPressed = true;
+            StartCoroutine("WaitForHeavy");
+        }
+    }
     void StartAttack()
     {
         // Set the appropriate attack animation and properties
@@ -121,14 +126,13 @@ public class PlayerCombat : MonoBehaviour
         {
             heavyPressed = false; // Clear the buffer
             CancelInvoke("EndCombo");
-            anim.SetBool("heavyStarted", true);
             anim.SetBool("heavyHeld", true);
-            controller.CanMove(false);
+            anim.SetBool("heavyEnded", false);
         }
     }
     void ExitAttack()
     {
-        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.9f && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") && attackPressed == false)
+        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1f && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") && attackPressed == false && heavyPressed == false)
         {
             anim.SetBool("attack", false);
             Invoke("EndCombo", 0.5f);
@@ -138,8 +142,6 @@ public class PlayerCombat : MonoBehaviour
     #endregion LightAttacks
     void EndCombo()
     {
-        comboCounter = 0;
-        controller.CanMove(true);
         comboCounter = 0;
     }
     private void OnEnable()

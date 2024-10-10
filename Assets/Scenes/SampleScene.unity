@@ -395,10 +395,19 @@ MonoBehaviour:
       m_Groups: 
       m_Action: Heavy Attack
       m_Flags: 0
+    - m_Name: 
+      m_Id: c63a3d20-6939-45d4-8ff7-df441639e56f
+      m_Path: <Mouse>/rightButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Heavy Attack
+      m_Flags: 0
     m_Flags: 0
   comboCounter: 0
   attackPressed: 0
-  heavyStarted: 0
+  heavyPressed: 0
+  heavyEnded: 0
   controller: {fileID: 248598642}
   anim: {fileID: 0}
   weapon: {fileID: 8792870350466560893}

@@ -33,6 +33,7 @@ public class CameraController : MonoBehaviour
     {
         mouseX += rotateAction.ReadValue<Vector2>().x * hSensitivity;
         mouseY += rotateAction.ReadValue<Vector2>().y * -vSensitivity;
+        mouseY = Mathf.Clamp(mouseY, -25, 25);
 
         transform.LookAt(target);
 

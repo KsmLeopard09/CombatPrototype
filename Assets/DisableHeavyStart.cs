@@ -11,7 +11,7 @@ public class HeavyManage : MonoBehaviour
     }
     public void EndHeavyStart()
     {
-        m_animator.SetBool("heavyStarted", false);
+        m_animator.SetBool("heavyAttack", false);
         m_animator.SetBool("attack", false);
     }
     public void EndHeavy()
