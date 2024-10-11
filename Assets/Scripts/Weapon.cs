@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    public float damage;
     BoxCollider triggerBox;
+    public float damage;
 
     // Start is called before the first frame update
     void Start()

@@ -4,13 +4,14 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public class PlayerCombat : MonoBehaviour
 {
-    public List<AttackSO> combo; // List of combo attacks
-    public InputAction attack, heavyAttack; // Input action for attack
+    [SerializeField] List<AttackSO> combo; // List of combo attacks
+    [SerializeField] InputAction attack, heavyAttack; // Input action for attack
     public int comboCounter; // Current combo step
-    public bool attackPressed, heavyPressed, heavyEnded; // Buffered input indicator
+    public bool attackPressed, heavyPressed; // Buffered input indicator
     [SerializeField] PlayerController controller;
+    float heavyHeld;
 
-    public Animator anim; // Reference to the Animator component
+    [SerializeField] Animator anim; // Reference to the Animator component
     [SerializeField] Weapon weapon; // Reference to the weapon
 
     private void Start()
@@ -34,10 +35,12 @@ public class PlayerCombat : MonoBehaviour
         if (heavyAttack.IsInProgress())
         {
             anim.SetBool("heavyHeld", true);
+            ChargeAttack();
         }
         else
         {
             anim.SetBool("heavyHeld", false);
+            Debug.Log(heavyHeld);
         }
         if (!anim.GetBool("heavyEnded"))
         {
@@ -50,6 +53,7 @@ public class PlayerCombat : MonoBehaviour
     #region LightAttacks
     void Attack()
     {
+        CancelInvoke("EndCombo");
         anim.SetBool("attack", true);
         if (comboCounter < combo.Count)
         {
@@ -80,6 +84,11 @@ public class PlayerCombat : MonoBehaviour
             heavyPressed = true;
             StartCoroutine("WaitForHeavy");
         }
+    }
+    void ChargeAttack()
+    {
+        heavyHeld += Time.deltaTime;
+
     }
     void StartAttack()
     {
@@ -132,7 +141,7 @@ public class PlayerCombat : MonoBehaviour
     }
     void ExitAttack()
     {
-        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1f && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") && attackPressed == false && heavyPressed == false)
+        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1f && attackPressed == false && heavyPressed == false)
         {
             anim.SetBool("attack", false);
             Invoke("EndCombo", 0.5f);
