@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 public class PlayerCombat : MonoBehaviour
 {
     [SerializeField] List<AttackSO> combo; // List of combo attacks
     [SerializeField] InputAction attack, heavyAttack; // Input action for attack
-    public int comboCounter; // Current combo step
+    public int comboCounter, heavyCharge; // Current combo step
     public bool attackPressed, heavyPressed; // Buffered input indicator
     [SerializeField] PlayerController controller;
     float heavyHeld;
 
+    [SerializeField] Slider slider;
     [SerializeField] Animator anim; // Reference to the Animator component
     [SerializeField] Weapon weapon; // Reference to the weapon
 
@@ -21,6 +23,13 @@ public class PlayerCombat : MonoBehaviour
 
     private void Update()
     {
+        if (heavyCharge < 2 && slider.value == slider.maxValue)
+        {
+            slider.maxValue += 1 * heavyHeld;
+            heavyCharge += 1;
+            slider.value = 0;
+        }
+        slider.value += heavyHeld * Time.deltaTime;
         if (!anim.GetCurrentAnimatorStateInfo(0).IsTag("heavyAttack"))
         {
             if(attack.IsPressed())
@@ -40,7 +49,10 @@ public class PlayerCombat : MonoBehaviour
         else
         {
             anim.SetBool("heavyHeld", false);
-            Debug.Log(heavyHeld);
+            heavyHeld = 0;
+            slider.value = 0;
+            heavyCharge = 0;
+            slider.maxValue = 1;
         }
         if (!anim.GetBool("heavyEnded"))
         {
@@ -88,7 +100,6 @@ public class PlayerCombat : MonoBehaviour
     void ChargeAttack()
     {
         heavyHeld += Time.deltaTime;
-
     }
     void StartAttack()
     {

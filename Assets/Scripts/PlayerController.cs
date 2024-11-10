@@ -121,8 +121,8 @@ public class PlayerController : MonoBehaviour
             animator.SetFloat("Multiplier", 1.45f);
         }
 
-        animator.SetFloat("X", movementValue.x, dampTime, Time.deltaTime);
-        animator.SetFloat("Y", movementValue.y, dampTime, Time.deltaTime);
+        animator.SetFloat("X", movementValue.x, dampTime, Time.fixedDeltaTime);
+        animator.SetFloat("Y", movementValue.y, dampTime, Time.fixedDeltaTime);
     }
     void Walk()
     {
