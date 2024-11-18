@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public InputAction sprintAction, moveAction;
     public Vector2 movementValue;
     [SerializeField] Animator animator;
-    Rigidbody rb;
+    public CharacterController characterController;
     float dampTime;
     float x, y;
     float idleFrames;
@@ -19,12 +19,13 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         combatController = GetComponent<PlayerCombat>();
-        rb = GetComponent<Rigidbody>();
+        characterController = GetComponentInChildren<CharacterController>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        characterController.Move(new Vector3(0, -9.81f, 0) * Time.deltaTime);
         //Gets the values of the Horizontal and the vertical axes
         x = moveAction.ReadValue<Vector2>().x;
         y = moveAction.ReadValue<Vector2>().y;
