@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class PlayerCombat : MonoBehaviour
 {
     [SerializeField] List<AttackSO> combo; // List of combo attacks
-    [SerializeField] InputAction attack, heavyAttack; // Input action for attack
+    [SerializeField] InputAction attack, heavyAttack, dodge; // Input action for attack
     public int comboCounter, heavyCharge; // Current combo step
     public bool attackPressed, heavyPressed; // Buffered input indicator
     [SerializeField] PlayerController controller;
@@ -23,6 +23,10 @@ public class PlayerCombat : MonoBehaviour
 
     private void Update()
     {
+        if (dodge.IsPressed())
+        {
+            Evade();
+        }
         if (heavyCharge < 2 && slider.value == slider.maxValue)
         {
             slider.maxValue += 1 * heavyHeld;
@@ -30,13 +34,13 @@ public class PlayerCombat : MonoBehaviour
             slider.value = 0;
         }
         slider.value += heavyHeld * Time.deltaTime;
-        if (!anim.GetCurrentAnimatorStateInfo(0).IsTag("heavyAttack"))
+        if (!anim.GetCurrentAnimatorStateInfo(0).IsTag("heavyAttack") && !anim.GetBool("Evade"))
         {
-            if(attack.IsPressed())
+            if (attack.IsPressed())
             {
                 Attack();
             }
-            else if(heavyAttack.IsPressed())
+            else if (heavyAttack.IsPressed())
             {
                 HeavyAttack();
             }
@@ -59,6 +63,7 @@ public class PlayerCombat : MonoBehaviour
             CancelInvoke("EndCombo");
         }
         ExitAttack();
+        ExitEvade();
         anim.SetFloat("Multiplier", 1.4f); //Adjusting animation speed
     }
 
@@ -70,7 +75,7 @@ public class PlayerCombat : MonoBehaviour
         if (comboCounter < combo.Count)
         {
             // If not in the middle of an attack animation, start the attack
-            if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !anim.GetCurrentAnimatorStateInfo(0).IsName("HeavyAttack"))
+            if (!anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") && !anim.GetCurrentAnimatorStateInfo(0).IsTag("HeavyAttack"))
             {
                 StartAttack();
             }
@@ -159,6 +164,24 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    void Evade()
+    {
+        if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Evade"))
+        {
+            anim.SetBool("evade", true);
+        }
+        else
+        {
+            anim.SetBool("dodge", true);
+        }
+    }
+    void ExitEvade()
+    {
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Evade") && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f && anim.GetBool("evade") == true)
+        {
+            anim.SetBool("evade", false);
+        }
+    }
     #endregion LightAttacks
     void EndCombo()
     {
@@ -168,11 +191,13 @@ public class PlayerCombat : MonoBehaviour
     {
         attack.Enable();
         heavyAttack.Enable();
+        dodge.Enable();
     }
 
     private void OnDisable()
     {
         attack.Disable();
         heavyAttack.Disable();
+        dodge.Disable();
     }
 }

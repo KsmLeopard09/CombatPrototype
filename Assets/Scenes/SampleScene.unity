@@ -516,6 +516,31 @@ MonoBehaviour:
       m_Action: Heavy Attack
       m_Flags: 0
     m_Flags: 0
+  dodge:
+    m_Name: Dodge
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 4b6252c0-6005-4fd6-aed0-924673ca3282
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 894b07c9-1f86-45a1-a7d5-654a5bf7f180
+      m_Path: <Gamepad>/buttonSouth
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dodge
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 0774c783-ebfb-41d9-932e-634731219922
+      m_Path: <Gamepad>/buttonWest
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dodge
+      m_Flags: 0
+    m_Flags: 0
   comboCounter: 0
   heavyCharge: 0
   attackPressed: 0
